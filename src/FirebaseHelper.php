@@ -27,7 +27,7 @@ class FirebaseHelper extends FluentAbstract
      *
      * @var string
      */
-    private static $_configFile = '@common/config/firebase/google-services';
+    private static $_configFile = '@common/config/firebase';
 
     /**
      * @var Firebase
@@ -51,13 +51,15 @@ class FirebaseHelper extends FluentAbstract
     /**
      * Get firebase realtime db instance
      *
+     * @param string|null $projectId
+     *
      * @return Firebase
      */
-    public static function initRDB(string $projectId)
+    public static function initRDB(string $projectId = 'google-services')
     {
         if (self::$_instanceRDB === null) {
             try {
-                $serviceAccount     = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "-$projectId.json"));
+                $serviceAccount     = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "/$projectId.json"));
                 self::$_instanceRDB = (new Factory)
                     ->withServiceAccount($serviceAccount)
                     ->create();
