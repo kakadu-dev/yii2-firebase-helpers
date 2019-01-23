@@ -10,7 +10,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```bash
-php composer.phar require --prefer-dist kakadu-dev/yii2-jwt-auth "@dev"
+php composer.phar require --prefer-dist kakadu-dev/yii2-firebase-helpers "@dev"
 ```
 
 or add
