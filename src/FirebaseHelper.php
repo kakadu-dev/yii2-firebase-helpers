@@ -14,6 +14,7 @@ use Kreait\Firebase\ServiceAccount;
 
 /**
  * Class    FirebaseHelper
+ *
  * @package Kakadu\Yii2Firebase
  * @author  Yarmaliuk Mikhail
  * @version 1.0
@@ -32,7 +33,7 @@ class FirebaseHelper extends FluentAbstract
     /**
      * @var Firebase
      */
-    private static $_instanceRDB;
+    private static $_firebase;
 
     /**
      * Set config file path (with part of the file name)
@@ -49,18 +50,18 @@ class FirebaseHelper extends FluentAbstract
     }
 
     /**
-     * Get firebase realtime db instance
+     * Get firebase instance
      *
      * @param string|null $projectId
      *
      * @return Firebase
      */
-    public static function initRDB(string $projectId = 'google-services')
+    public static function init(string $projectId = 'google-services')
     {
-        if (self::$_instanceRDB === null) {
+        if (self::$_firebase === null) {
             try {
-                $serviceAccount     = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "/$projectId.json"));
-                self::$_instanceRDB = (new Factory)
+                $serviceAccount  = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "/$projectId.json"));
+                self::$_firebase = (new Factory)
                     ->withServiceAccount($serviceAccount)
                     ->create();
             } catch (\Exception $e) {
@@ -68,6 +69,6 @@ class FirebaseHelper extends FluentAbstract
             }
         }
 
-        return self::$_instanceRDB;
+        return self::$_firebase;
     }
 }
