@@ -8,6 +8,7 @@
 
 namespace Kakadu\Yii2Firebase;
 
+use Kreait\Firebase\Auth;
 use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -100,5 +101,15 @@ class FirebaseHelper extends FluentAbstract
         }
 
         return self::$_db;
+    }
+
+    /**
+     * Get firebase auth
+     *
+     * @return Auth
+     */
+    public function getAuth(): Auth
+    {
+        return self::$_firebase->createAuth();
     }
 }
