@@ -8,7 +8,7 @@
 
 namespace Kakadu\Yii2Firebase;
 
-use Kreait\Firebase;
+use Kreait\Firebase\Database;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
@@ -17,7 +17,7 @@ use Kreait\Firebase\ServiceAccount;
  *
  * @package Kakadu\Yii2Firebase
  * @author  Yarmaliuk Mikhail
- * @version 1.0
+ * @version 2.0
  *
  * Firebase SDK helper
  */
@@ -31,9 +31,19 @@ class FirebaseHelper extends FluentAbstract
     private static $_configFile = '@common/config/firebase';
 
     /**
-     * @var Firebase
+     * @var FirebaseHelper
+     */
+    private static $_instance;
+
+    /**
+     * @var Factory
      */
     private static $_firebase;
+
+    /**
+     * @var Database
+     */
+    private static $_db;
 
     /**
      * Set config file path (with part of the file name)
@@ -54,21 +64,41 @@ class FirebaseHelper extends FluentAbstract
      *
      * @param string|null $projectId
      *
-     * @return Firebase
+     * @return FirebaseHelper
      */
     public static function init(string $projectId = 'google-services')
     {
-        if (self::$_firebase === null) {
+        if (self::$_instance === null) {
+            self::$_instance = new FirebaseHelper();
+
+            if (self::$_firebase === null) {
+                try {
+                    $serviceAccount  = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "/$projectId.json"));
+                    self::$_firebase = (new Factory)->withServiceAccount($serviceAccount);
+                } catch (\Exception $e) {
+                    return self::catchMethod();
+                }
+            }
+        }
+
+        return self::$_instance;
+    }
+
+    /**
+     * Get database instance
+     *
+     * @return Database
+     */
+    public function getDatabase(): Database
+    {
+        if (self::$_db === null) {
             try {
-                $serviceAccount  = ServiceAccount::fromJsonFile(\Yii::getAlias(self::$_configFile . "/$projectId.json"));
-                self::$_firebase = (new Factory)
-                    ->withServiceAccount($serviceAccount)
-                    ->create();
+                self::$_db = self::$_firebase->createDatabase();
             } catch (\Exception $e) {
                 return self::catchMethod();
             }
         }
 
-        return self::$_firebase;
+        return self::$_db;
     }
 }
